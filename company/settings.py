@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     # custom
-    #'employee',
+    'employee',
 ]
 
 MIDDLEWARE = [
