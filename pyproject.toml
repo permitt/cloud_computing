@@ -5,7 +5,7 @@ description = ""
 authors = ["Mitar Perovic <perovicmitar@uns.ac.rs>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 django = "=3.2.*"
 djangorestframework = "=3.12.*"
 serializers = "^0.2.4"

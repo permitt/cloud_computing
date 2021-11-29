@@ -7,3 +7,7 @@ class EmployeeModel(models.Model):
     surname = models.CharField(max_length=20)
     birth_date = models.DateTimeField()
     salary = models.FloatField()
+
+
+class Counter(models.Model):
+    count = models.PositiveIntegerField(default=0)
