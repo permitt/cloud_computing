@@ -16,7 +16,7 @@ def get_employee(request: Request, id: int) -> Response:
     return Response(serializer.data, safe=False, status=200)
 
 def count(request: Request) -> Response:
-    counter: Counter = Counter.objects.all()[0]
+    counter: Counter = Counter.objects.get(id=1)
     counter.count += 1
     counter.save()
 
