@@ -12,19 +12,59 @@ services:
       - "5432:5432"
     volumes:
       - ./data/db:/var/lib/postgresql/data
+  db2:
+    image: postgres
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD="trust"
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=cloud_computing
+      - POSTGRES_PASSWORD=defence1
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
   web:
     build: .
     restart: always
     command: >
       sh -c "poetry run python manage.py migrate &&
-             poetry run python manage.py runserver 0.0.0.0:8000"
+             poetry run python manage.py runserver 0.0.0.0:8001"
     volumes:
       - .:/code
     ports:
-      - "8000:8000"
+      - "8001:8000"
     environment:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=defence1
+      - DB_PORT=5432
     depends_on:
       - db
+  web2:
+    build: .
+    restart: always
+    command: >
+      sh -c "poetry run python manage.py migrate &&
+             poetry run python manage.py runserver 0.0.0.0:8002"
+              gunicrorn --bind 0.0.0.0:8002 company.wsgi
+    volumes:
+      - .:/code
+    ports:
+      - "8002:8000"
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=defence1
+      - DB_PORT=5433
+    depends_on:
+      - db2
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./app.conf:/etc/nginx/nginx.conf
+    ports:
+      - "8000:80"
+    depends_on:
+      - web
+      - web2
+
