@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'master'
+      - 'main'
       - 'checkpoint4'
 
 jobs:
