@@ -30,11 +30,11 @@ services:
     restart: always
     command: >
       sh -c "poetry run python manage.py migrate &&
-             poetry run gunicorn --bind 0.0.0.0:8000 company.wsgi"
+             poetry run gunicorn --bind 0.0.0.0:8888 company.wsgi"
     volumes:
       - .:/code
     ports:
-      - "8001:8000"
+      - "8888:8888"
     environment:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
@@ -50,12 +50,12 @@ services:
     restart: always
     command: >
       sh -c "poetry run python manage.py migrate &&
-             poetry run gunicorn --bind 0.0.0.0:8000 company.wsgi"
+             poetry run gunicorn --bind 0.0.0.0:8889 company.wsgi"
 
     volumes:
       - .:/code
     ports:
-      - "8002:8000"
+      - "8889:8889"
     environment:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
