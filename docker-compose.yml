@@ -3,28 +3,75 @@ version: "3.9"
 services:
   db:
     image: postgres
+    restart: always
     environment:
-      - POSTGRES_HOST_AUTH_METHOD="trust"
+      - POSTGRES_HOST_AUTH_METHOD=trust
       - POSTGRES_USER=postgres
       - POSTGRES_DB=cloud_computing
       - POSTGRES_PASSWORD=defence1
     ports:
-      - "5432:5432"
+      - "5887:5432"
     volumes:
       - ./data/db:/var/lib/postgresql/data
+  db2:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=cloud_computing
+      - POSTGRES_PASSWORD=defence1
+    ports:
+      - "5888:5432"
+    volumes:
+      - ./data/db2:/var/lib/postgresql/data
   web:
-    build: .
+    image: permitt/cloud_computing:latest
     restart: always
     command: >
       sh -c "poetry run python manage.py migrate &&
-             poetry run python manage.py runserver 0.0.0.0:8000"
+             poetry run gunicorn --bind 0.0.0.0:8888 company.wsgi"
     volumes:
       - .:/code
     ports:
-      - "8000:8000"
+      - "8888:8888"
     environment:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=defence1
+      - DB_PORT=5432
+      - DB_HOST=db
+      - SECRET_KEY=django-insecure-hu8z%la+9244!yci#)g_&(8x@msi@e8xa0h#i*h5zc%h&)q%g7
     depends_on:
       - db
+
+  web2:
+    image: permitt/cloud_computing:latest
+    restart: always
+    command: >
+      sh -c "poetry run python manage.py migrate &&
+             poetry run gunicorn --bind 0.0.0.0:8889 company.wsgi"
+
+    volumes:
+      - .:/code
+    ports:
+      - "8889:8889"
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=defence1
+      - DB_PORT=5432
+      - DB_HOST=db2
+      - SECRET_KEY=django-insecure-hu8z%la+9244!yci#)g_&(8x@msi@e8xa0h#i*h5zc%h&)q%g7
+    depends_on:
+      - db2
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./app.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8000:80"
+    depends_on:
+      - web
+      - web2
+
