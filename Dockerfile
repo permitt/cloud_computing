@@ -4,5 +4,4 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /code
 COPY poetry.lock pyproject.toml /code/
 RUN pip3 install poetry
-RUN poetry install
-RUN poetry install gunicorn
+RUN poetry add gunicorn && poetry install
